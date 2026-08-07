@@ -1,4 +1,145 @@
-<img width="1917" height="1018" alt="Screenshot 2026-08-07 220256" src="https://github.com/user-attachments/assets/eac68c7b-c9c7-4830-8238-eebb4bf469fa" />
-<img width="1891" height="945" alt="Screenshot 2026-08-07 220132" src="https://github.com/user-attachments/assets/c218f204-232c-4dc4-9665-f0f98ea59286" />
-<img width="1890" height="940" alt="Screenshot 2026-08-07 220330" src="https://github.com/user-attachments/assets/186b3895-2c8b-4fd0-921e-2021bbbcf619" />
+# Task API
+
+A simple RESTful CRUD API built with **FastAPI** for managing tasks.
+
+## Features
+
+- Create a task
+- View all tasks
+- View a task by ID
+- Update a task
+- Delete a task
+- Interactive Swagger UI documentation
+
+---
+
+## Tech Stack
+
+- Python 3
+- FastAPI
+- Uvicorn
+- Pydantic
+
+---
+
+## Installation
+
+### Clone the repository
+
+```bash
+git clone https://github.com/Ayshashafeek/TaskAPI.git
+cd TaskAPI
+```
+
+### Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+### Activate the virtual environment
+
+**Windows**
+
+```bash
+venv\Scripts\activate
+```
+
+### Install dependencies
+
+```bash
+pip install fastapi uvicorn
+```
+
+---
+
+## Run the application
+
+```bash
+uvicorn main:app --reload
+```
+
+The API will be available at:
+
+```
+http://127.0.0.1:8000
+```
+
+Swagger UI:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | / | API information |
+| GET | /health | Health check |
+| GET | /tasks | Get all tasks |
+| GET | /tasks/{id} | Get task by ID |
+| POST | /tasks | Create a task |
+| PUT | /tasks/{id} | Update a task |
+| DELETE | /tasks/{id} | Delete a task |
+
+---
+
+## Example curl
+
+```bash
+curl -i http://127.0.0.1:8000/tasks
+```
+
+Example output
+
+```http
+HTTP/1.1 200 OK
+content-type: application/json
+
+[
+  {
+    "id":1,
+    "title":"Complete assignment",
+    "done":false
+  },
+  {
+    "id":2,
+    "title":"Study FastAPI",
+    "done":true
+  }
+]
+```
+
+---
+
+## Swagger UI
+
+Open:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+## Screenshots
+
+### Swagger UI
+![Screenshot1](docs/png1.png)
+
+### Create Task
+![Screenshot1](docs/png2.png)
+
+### Get Tasks
+![Screenshot1](docs/png4.png)
+```markdown
+![Swagger UI](docs/swagger-ui.png)
+```
+
+---
+
+## Author
+
+Aysha Shafeek M M
 
