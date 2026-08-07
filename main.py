@@ -4,7 +4,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-app = FastAPI()
+app = FastAPI(
+    title="Task API",
+    description="A simple CRUD API for managing tasks built with FastAPI.",
+    version="1.0.0",
+)
 
 
 @app.exception_handler(RequestValidationError)
@@ -30,22 +34,42 @@ tasks = [
 ]
 
 
-@app.get("/")
+@app.get(
+    "/",
+    summary="API information",
+    description="Returns basic information about the Task API."
+)
 def root():
-  return {"name": "Task API", "version": "1.0", "endpoints": ["/tasks"]}
+    return {
+        "name": "Task API",
+        "version": "1.0",
+        "endpoints": ["/tasks"]
+    }
 
 
-@app.get("/health")
+@app.get(
+    "/health",
+    summary="Health check",
+    description="Checks the health of the API."
+)
 def health():
   return {"status": "ok"}
 
 
-@app.get("/tasks")
+@app.get(
+    "/tasks",
+    summary="Get all tasks",
+    description="Returns a list of all tasks."
+)
 def get_tasks():
   return tasks
 
 
-@app.get("/tasks/{id}")
+@app.get(
+    "/tasks/{id}",
+    summary="Get a task by ID",
+    description="Returns the task with the specified ID."
+)
 def get_task(id: int):
   for task in tasks:
     if task["id"] == id:
@@ -56,7 +80,11 @@ def get_task(id: int):
   )
 
 
-@app.post("/tasks", status_code=201)
+@app.post(
+    "/tasks",
+    summary="Create a new task",
+    description="Creates a new task with the specified title."
+)
 def create_task(task: TaskCreate):
   if task.title is None or task.title.strip() == "":
     return JSONResponse(status_code=400, content={"error": "Title is required"})
@@ -66,7 +94,12 @@ def create_task(task: TaskCreate):
   tasks.append(new_task)
 
   return new_task
-@app.put("/tasks/{id}")
+
+@app.put(
+    "/tasks/{id}",
+    summary="Update a task",
+    description="Updates the task with the specified ID."
+)
 def update_task(id: int, updated_task: TaskUpdate):
 
     if updated_task.title is None and updated_task.done is None:
@@ -96,7 +129,12 @@ def update_task(id: int, updated_task: TaskUpdate):
         status_code=404,
         content={"error": f"Task {id} not found"},
     )
-@app.delete("/tasks/{id}", status_code=204)
+@app.delete(
+    "/tasks/{id}",
+    status_code=204,
+    summary="Delete a task",
+    description="Deletes a task by its ID."
+)
 def delete_task(id: int):
 
     for index, task in enumerate(tasks):
