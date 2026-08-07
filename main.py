@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -19,7 +19,9 @@ async def validation_exception_handler(
 
 class TaskCreate(BaseModel):
   title: Optional[str] = None
-
+class TaskUpdate(BaseModel):
+    title: Optional[str] = None
+    done: Optional[bool] = None
 
 tasks = [
     {"id": 1, "title": "Complete assignment", "done": False},
@@ -64,3 +66,45 @@ def create_task(task: TaskCreate):
   tasks.append(new_task)
 
   return new_task
+@app.put("/tasks/{id}")
+def update_task(id: int, updated_task: TaskUpdate):
+
+    if updated_task.title is None and updated_task.done is None:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Request body cannot be empty"},
+        )
+
+    for task in tasks:
+        if task["id"] == id:
+
+            if updated_task.title is not None:
+                if updated_task.title.strip() == "":
+                    return JSONResponse(
+                        status_code=400,
+                        content={"error": "Title is required"},
+                    )
+
+                task["title"] = updated_task.title
+
+            if updated_task.done is not None:
+                task["done"] = updated_task.done
+
+            return task
+
+    return JSONResponse(
+        status_code=404,
+        content={"error": f"Task {id} not found"},
+    )
+@app.delete("/tasks/{id}", status_code=204)
+def delete_task(id: int):
+
+    for index, task in enumerate(tasks):
+        if task["id"] == id:
+            tasks.pop(index)
+            return Response(status_code=204)
+
+    return JSONResponse(
+        status_code=404,
+        content={"error": f"Task {id} not found"},
+    )
