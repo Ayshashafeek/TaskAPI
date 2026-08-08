@@ -136,7 +136,9 @@ http://127.0.0.1:8000/docs
 ```markdown
 ![Swagger UI](docs/swagger-ui.png)
 ```
+## Persistence Experiment
 
+Tasks created through the API disappear when the server is restarted. This happens because the current Task API stores tasks only in an in-memory Python list rather than a persistent database. The data therefore exists only while the application process is running.
 ---
 
 ## Author
