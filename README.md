@@ -138,15 +138,15 @@ Swagger UI allows the API endpoints to be tested directly from the browser witho
 
 ### Swagger UI
 
-![Swagger UI](docs/swagger-ui.png)
+![Swagger UI](docs/png1.png)
 
 ### Create Task
 
-![Create Task](docs/create-task.png)
+![Create Task](docs/png2.png)
 
 ### Get Tasks
 
-![Get Tasks](docs/get-tasks.png)
+![Get Tasks](docs/png4.png)
 
 ---
 
