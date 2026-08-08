@@ -84,6 +84,9 @@ http://127.0.0.1:8000/docs
 | POST | /tasks | Create a task |
 | PUT | /tasks/{id} | Update a task |
 | DELETE | /tasks/{id} | Delete a task |
+| GET | /tasks?done=true | Filter tasks by completion status |
+| GET | /tasks?search=FastAPI | Search tasks by title |
+| GET | /stats | Get task statistics |
 
 ---
 
@@ -129,17 +132,21 @@ http://127.0.0.1:8000/docs
 ![Screenshot1](docs/png1.png)
 
 ### Create Task
-![Screenshot1](docs/png2.png)
+![Screenshot2](docs/png2.png)
 
 ### Get Tasks
-![Screenshot1](docs/png4.png)
+![Screenshot3](docs/png4.png)
 ```markdown
 ![Swagger UI](docs/swagger-ui.png)
 ```
 ## Persistence Experiment
 
-Tasks created through the API disappear when the server is restarted. This happens because the current Task API stores tasks only in an in-memory Python list rather than a persistent database. The data therefore exists only while the application process is running.
+- Tasks created through the API disappear when the server is restarted. This happens because the current Task API stores tasks only in an in-memory Python list rather than a persistent database. The data therefore exists only while the application process is running.
 ---
+
+- Filter tasks by completion status
+- Search tasks by title
+- View task statistics
 
 ## Author
 
