@@ -1,3 +1,4 @@
+from database import get_connection, init_db
 from typing import Optional
 from fastapi import FastAPI, Request, Response, status
 from fastapi.exceptions import RequestValidationError
@@ -9,7 +10,7 @@ app = FastAPI(
     description="A simple CRUD API for managing tasks built with FastAPI.",
     version="1.0.0",
 )
-
+init_db()
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(
@@ -26,12 +27,6 @@ class TaskCreate(BaseModel):
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     done: Optional[bool] = None
-
-tasks = [
-    {"id": 1, "title": "Complete assignment", "done": False},
-    {"id": 2, "title": "Study FastAPI", "done": True},
-    {"id": 3, "title": "Push code to GitHub", "done": False},
-]
 
 
 @app.get(
@@ -61,23 +56,34 @@ def health():
     summary="Get all tasks",
     description="Returns a list of all tasks."
 )
-def get_tasks(done: Optional[bool] = None, search: Optional[str] = None):
+def get_tasks(
+    done: Optional[bool] = None,
+    search: Optional[str] = None
+):
+    conn = get_connection()
 
-    filtered_tasks = tasks
+    query = "SELECT * FROM tasks"
+    conditions = []
+    parameters = []
 
     if done is not None:
-        filtered_tasks = [
-            task for task in filtered_tasks
-            if task["done"] == done
-        ]
+        conditions.append("done = ?")
+        parameters.append(done)
 
     if search is not None:
-        filtered_tasks = [
-            task for task in filtered_tasks
-            if search.lower() in task["title"].lower()
-        ]
+        conditions.append("title LIKE ?")
+        parameters.append(f"%{search}%")
 
-    return filtered_tasks
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    cursor = conn.execute(query, parameters)
+
+    tasks = [dict(row) for row in cursor.fetchall()]
+
+    conn.close()
+
+    return tasks
 
 
 @app.get(
@@ -86,13 +92,24 @@ def get_tasks(done: Optional[bool] = None, search: Optional[str] = None):
     description="Returns the task with the specified ID."
 )
 def get_task(id: int):
-  for task in tasks:
-    if task["id"] == id:
-      return task
+    conn = get_connection()
 
-  return JSONResponse(
-      status_code=404, content={"error": f"Task {id} not found"}
-  )
+    cursor = conn.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (id,)
+    )
+
+    task = cursor.fetchone()
+
+    conn.close()
+
+    if task is None:
+        return JSONResponse(
+            status_code=404,
+            content={"error": f"Task {id} not found"}
+        )
+
+    return dict(task)
 
 
 @app.post(
