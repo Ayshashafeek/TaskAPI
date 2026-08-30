@@ -114,18 +114,40 @@ def get_task(id: int):
 
 @app.post(
     "/tasks",
+    status_code=201,
     summary="Create a new task",
     description="Creates a new task with the specified title."
 )
 def create_task(task: TaskCreate):
-  if task.title is None or task.title.strip() == "":
-    return JSONResponse(status_code=400, content={"error": "Title is required"})
+    if task.title is None or task.title.strip() == "":
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Title is required"}
+        )
 
-  new_task = {"id": len(tasks) + 1, "title": task.title, "done": False}
+    conn = get_connection()
 
-  tasks.append(new_task)
+    cursor = conn.execute(
+        "INSERT INTO tasks (title, done) VALUES (?, ?)",
+        (task.title, False)
+    )
 
-  return new_task
+    task_id = cursor.lastrowid
+
+    conn.commit()
+
+    cursor = conn.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,)
+    )
+
+    new_task = dict(cursor.fetchone())
+
+    conn.close()
+
+    new_task["done"] = bool(new_task["done"])
+
+    return new_task
 
 @app.put(
     "/tasks/{id}",
