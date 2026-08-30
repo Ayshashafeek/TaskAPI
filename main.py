@@ -248,12 +248,20 @@ def delete_task(id: int):
 
 @app.get("/stats")
 def get_stats():
-    total = len(tasks)
-    done = sum(1 for task in tasks if task["done"])
-    open_tasks = total - done
+    conn = get_connection()
+
+    total = conn.execute(
+        "SELECT COUNT(*) FROM tasks"
+    ).fetchone()[0]
+
+    done = conn.execute(
+        "SELECT COUNT(*) FROM tasks WHERE done = 1"
+    ).fetchone()[0]
+
+    conn.close()
 
     return {
         "total": total,
         "done": done,
-        "open": open_tasks
+        "open": total - done
     }
